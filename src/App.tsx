@@ -1,11 +1,7 @@
-import { FileImporter } from './components/FileImporter'
+import { Main } from './components/Main'
 
 function App() {
-  return (
-    <div>
-      <FileImporter />
-    </div>
-  )
+  return <Main />
 }
 
 export default App
