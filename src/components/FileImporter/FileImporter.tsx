@@ -14,11 +14,10 @@ type AdviserCsv = {
   firstName: string
   wage: number
 }
-type Time = 'AM' | 'PM' | 'AMPM'
 type NgScheduleCsv = {
   adviserId: string
   date: number
-  time: Time
+  time: string
 }
 
 type CsvReaderProps = {
@@ -57,21 +56,6 @@ const CsvReader = (props: CsvReaderProps) => {
   )
 }
 
-//TODO SUMMER TIME
-const timeFromString = (value: string): Time => {
-  if (value === '休み') {
-    return 'AMPM'
-  }
-  const [start, end] = value.split(' ~ ').map((v) => Number(v.split(':')[0]))
-  if (start >= 12) {
-    return 'PM'
-  }
-  if (end <= 13) {
-    return 'AM'
-  }
-  return 'AMPM'
-}
-
 export const FileImporter = () => {
   const [farms, setFarms] = useState<FarmCsv[]>([])
   const [advisers, setAdvisers] = useState<AdviserCsv[]>([])
@@ -103,7 +87,7 @@ export const FileImporter = () => {
       data.map((v) => ({
         adviserId: v[1],
         date: Number(v[5].split(/\D/)[2]),
-        time: timeFromString(v[6]),
+        time: v[6],
       }))
     )
   }, [])
