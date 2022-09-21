@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Farm } from '../../domain'
+import { useFarm } from '../../domain'
+import { useAdviser } from '../../domain/adviser'
 import { CostForm } from '../CostForm'
 import { FileImporter } from '../FileImporter'
 import { MonthForm } from '../MonthForm'
@@ -24,7 +25,8 @@ export const Main = () => {
     year: 0,
     month: 0,
   })
-  const [farms, setFarm] = useState<Farm[]>([])
+  const { farms, setFarm, setCost } = useFarm()
+  const { setAdviser, setNgSchedule } = useAdviser()
 
   if (status === 'EDIT_MONTH') {
     return (
@@ -40,7 +42,12 @@ export const Main = () => {
   if (status === 'IMPORT_FILE') {
     return (
       <div className='flex flex-col items-center'>
-        <FileImporter onLoadFarmCsv={setFarm} />
+        <FileImporter
+          month={base}
+          onLoadFarmCsv={setFarm}
+          onLoadAdviserCsv={setAdviser}
+          onLoadNgScheduleCsv={setNgSchedule}
+        />
         <NextButton onClick={() => setStatus('SET_COST')} />
       </div>
     )
@@ -48,7 +55,7 @@ export const Main = () => {
   if (status === 'SET_COST') {
     return (
       <div className='flex flex-col items-center'>
-        <CostForm farms={farms} />
+        <CostForm farms={farms} onChangeCost={setCost} />
         <NextButton onClick={() => setStatus('EDIT_SCHEDULES')} />
       </div>
     )

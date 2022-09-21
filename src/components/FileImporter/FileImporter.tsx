@@ -2,8 +2,9 @@ import clsx from 'clsx'
 import { useCallback, useState } from 'react'
 import { useCSVReader } from 'react-papaparse'
 import { Farm } from '../../domain'
+import { Adviser } from '../../domain/adviser'
+import { Time, timeFromString } from '../../domain/time'
 import { CheckIcon } from '../Icon'
-
 type AdviserCsv = {
   id: string
   lastName: string
@@ -52,11 +53,20 @@ const CsvReader = (props: CsvReaderProps) => {
   )
 }
 
+const makeDateList = (year: number, month: number): number[] => {
+  const lastDate = new Date(year, month)
+  lastDate.setDate(-1)
+  return [...Array(lastDate.getDate())].map((v) => v + 1)
+}
 type FileImporterProps = {
+  month: { year: number; month: number }
   onLoadFarmCsv: (farms: Farm[]) => void
+  onLoadAdviserCsv: (advisers: Adviser[]) => void
+  onLoadNgScheduleCsv: (
+    data: { adviserId: string; date: number; time: Time }[]
+  ) => void
 }
 export const FileImporter = (props: FileImporterProps) => {
-  const [advisers, setAdvisers] = useState<AdviserCsv[]>([])
   const [ngSchedules, setNgSchedules] = useState<NgScheduleCsv[]>([])
 
   const handleLoadFarm = useCallback((data: string[]) => {
@@ -71,22 +81,28 @@ export const FileImporter = (props: FileImporterProps) => {
   }, [])
 
   const handleLoadAdviser = useCallback((data: string[]) => {
-    setAdvisers(
+    props.onLoadAdviserCsv(
       data.map((v) => ({
         id: v[0],
         lastName: v[1],
         firstName: v[2],
         wage: Number(v[3]),
+        schedules: makeDateList(props.month.year, props.month.month).flatMap(
+          (v) => [
+            { date: v, time: 'AM', status: 'none' },
+            { date: v, time: 'PM', status: 'none' },
+          ]
+        ),
       }))
     )
   }, [])
 
   const handleLoadNgSchedule = useCallback((data: string[]) => {
-    setNgSchedules(
+    props.onLoadNgScheduleCsv(
       data.map((v) => ({
         adviserId: v[1],
         date: Number(v[5].split(/\D/)[2]),
-        time: v[6],
+        time: timeFromString(v[6]),
       }))
     )
   }, [])

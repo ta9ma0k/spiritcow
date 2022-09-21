@@ -2,6 +2,7 @@ import { Farm } from '../../domain'
 
 type CostFormProps = {
   farms: Farm[]
+  onChangeCost: (id: string, cost: number) => void
 }
 export const CostForm = (props: CostFormProps) => {
   return (
@@ -13,6 +14,7 @@ export const CostForm = (props: CostFormProps) => {
             <input
               type='number'
               className='border rounded-lg p-1 w-32 text-sm'
+              onBlur={(e) => props.onChangeCost(v.id, e.target.valueAsNumber)}
             />
           </li>
         ))}
