@@ -34,7 +34,7 @@ const CsvReader = (props: CsvReaderProps) => {
       }}
     >
       {({ getRootProps, acceptedFile }: any) => (
-        <div className='flex items-center'>
+        <div className='flex justify-center'>
           <h2 className='flex items-center w-36'>
             <span
               className={clsx(acceptedFile ? 'text-lime-500' : 'text-gray-400')}
@@ -93,7 +93,7 @@ export const FileImporter = () => {
   }, [])
 
   return (
-    <div className='p-5'>
+    <div className='p-5 flex flex-col justifiy-center w-full space-y-2'>
       <CsvReader title='farm' onLoad={handleLoadFarm} />
       <CsvReader title='adviser' onLoad={handleLoadAdviser} />
       <CsvReader title='ng schedule' onLoad={handleLoadNgSchedule} />
