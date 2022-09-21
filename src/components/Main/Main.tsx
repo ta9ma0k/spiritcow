@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Farm } from '../../domain'
+import { CostForm } from '../CostForm'
 import { FileImporter } from '../FileImporter'
 import { MonthForm } from '../MonthForm'
 
@@ -22,6 +24,7 @@ export const Main = () => {
     year: 0,
     month: 0,
   })
+  const [farms, setFarm] = useState<Farm[]>([])
 
   if (status === 'EDIT_MONTH') {
     return (
@@ -35,10 +38,20 @@ export const Main = () => {
     )
   }
   if (status === 'IMPORT_FILE') {
-    return <FileImporter />
+    return (
+      <div className='flex flex-col items-center'>
+        <FileImporter onLoadFarmCsv={setFarm} />
+        <NextButton onClick={() => setStatus('SET_COST')} />
+      </div>
+    )
   }
   if (status === 'SET_COST') {
-    return <div>set cost</div>
+    return (
+      <div className='flex flex-col items-center'>
+        <CostForm farms={farms} />
+        <NextButton onClick={() => setStatus('EDIT_SCHEDULES')} />
+      </div>
+    )
   }
   return <div>edit schedules</div>
 }

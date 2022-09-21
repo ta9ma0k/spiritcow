@@ -1,13 +1,9 @@
 import clsx from 'clsx'
 import { useCallback, useState } from 'react'
 import { useCSVReader } from 'react-papaparse'
+import { Farm } from '../../domain'
 import { CheckIcon } from '../Icon'
 
-type FarmCsv = {
-  id: string
-  name: string
-  adviserIds: string[]
-}
 type AdviserCsv = {
   id: string
   lastName: string
@@ -56,17 +52,20 @@ const CsvReader = (props: CsvReaderProps) => {
   )
 }
 
-export const FileImporter = () => {
-  const [farms, setFarms] = useState<FarmCsv[]>([])
+type FileImporterProps = {
+  onLoadFarmCsv: (farms: Farm[]) => void
+}
+export const FileImporter = (props: FileImporterProps) => {
   const [advisers, setAdvisers] = useState<AdviserCsv[]>([])
   const [ngSchedules, setNgSchedules] = useState<NgScheduleCsv[]>([])
 
   const handleLoadFarm = useCallback((data: string[]) => {
-    setFarms(
+    props.onLoadFarmCsv(
       data.map((v) => ({
         id: v[0],
         name: v[1],
         adviserIds: v[2].split(','),
+        cost: 0,
       }))
     )
   }, [])
