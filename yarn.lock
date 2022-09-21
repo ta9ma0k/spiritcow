@@ -313,6 +313,18 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@types/node@*":
+  version "18.7.18"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.7.18.tgz#633184f55c322e4fb08612307c274ee6d5ed3154"
+  integrity sha512-m+6nTEOadJZuTPkKR/SYK3A2d7FZrgElol9UP1Kae90VVU4a6mxnPuLiIW1m4Cq4gZ/nWb9GrdVXJCoCazDAbg==
+
+"@types/papaparse@^5.3.1":
+  version "5.3.5"
+  resolved "https://registry.yarnpkg.com/@types/papaparse/-/papaparse-5.3.5.tgz#e5ad94b1fe98e2a8ea0b03284b83d2cb252bbf39"
+  integrity sha512-R1icl/hrJPFRpuYj9PVG03WBAlghJj4JW9Py5QdR8FFSxaLmZRyu7xYDCCBZIJNfUv3MYaeBbhBoX958mUTAaw==
+  dependencies:
+    "@types/node" "*"
+
 "@types/prop-types@*":
   version "15.7.5"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
@@ -458,6 +470,11 @@ chokidar@^3.5.3:
     readdirp "~3.6.0"
   optionalDependencies:
     fsevents "~2.3.2"
+
+clsx@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 color-convert@^1.9.0:
   version "1.9.3"
@@ -863,6 +880,11 @@ object-hash@^3.0.0:
   resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-3.0.0.tgz#73f97f753e7baffc0e2cc9d6e079079744ac82e9"
   integrity sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==
 
+papaparse@^5.3.1:
+  version "5.3.2"
+  resolved "https://registry.yarnpkg.com/papaparse/-/papaparse-5.3.2.tgz#d1abed498a0ee299f103130a6109720404fbd467"
+  integrity sha512-6dNZu0Ki+gyV0eBsFKJhYr+MdQYAzFUGlBMNj3GNrmHxmz1lfRa24CjFObPXtjcetlOv5Ad299MhIK0znp3afw==
+
 path-parse@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
@@ -958,6 +980,14 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
+
+react-papaparse@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/react-papaparse/-/react-papaparse-4.1.0.tgz#09e1cdae55a0f3e36650aaf7ff9bb5ee2aed164a"
+  integrity sha512-sGJqK+OE2rVVQPxQUCCDW2prLIglv9kTdizhNe2awXvKo0gLShmhpRN3BwA+ujw5M2gSJ/KGNEwtgII0OsLgkg==
+  dependencies:
+    "@types/papaparse" "^5.3.1"
+    papaparse "^5.3.1"
 
 react-refresh@^0.14.0:
   version "0.14.0"

@@ -1,5 +1,11 @@
+import { FileImporter } from './components/FileImporter'
+
 function App() {
-  return <div className='text-lime-500'>hello world</div>
+  return (
+    <div>
+      <FileImporter />
+    </div>
+  )
 }
 
 export default App
