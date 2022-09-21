@@ -4,6 +4,7 @@ import { useAdviser } from '../../domain/adviser'
 import { CostForm } from '../CostForm'
 import { FileImporter } from '../FileImporter'
 import { MonthForm } from '../MonthForm'
+import { ScheduleEditor } from '../Schedule'
 
 type Status = 'EDIT_MONTH' | 'IMPORT_FILE' | 'SET_COST' | 'EDIT_SCHEDULES'
 
@@ -26,7 +27,7 @@ export const Main = () => {
     month: 0,
   })
   const { farms, setFarm, setCost } = useFarm()
-  const { setAdviser, setNgSchedule } = useAdviser()
+  const { advisers, setAdviser, setNgSchedule } = useAdviser()
 
   if (status === 'EDIT_MONTH') {
     return (
@@ -60,5 +61,9 @@ export const Main = () => {
       </div>
     )
   }
-  return <div>edit schedules</div>
+  return (
+    <div>
+      <ScheduleEditor farms={farms} advisers={advisers} month={base} />
+    </div>
+  )
 }

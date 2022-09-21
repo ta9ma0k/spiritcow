@@ -1,21 +1,10 @@
 import clsx from 'clsx'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useCSVReader } from 'react-papaparse'
 import { Farm } from '../../domain'
 import { Adviser } from '../../domain/adviser'
 import { Time, timeFromString } from '../../domain/time'
 import { CheckIcon } from '../Icon'
-type AdviserCsv = {
-  id: string
-  lastName: string
-  firstName: string
-  wage: number
-}
-type NgScheduleCsv = {
-  adviserId: string
-  date: number
-  time: string
-}
 
 type CsvReaderProps = {
   title: string
@@ -54,9 +43,9 @@ const CsvReader = (props: CsvReaderProps) => {
 }
 
 const makeDateList = (year: number, month: number): number[] => {
-  const lastDate = new Date(year, month)
-  lastDate.setDate(-1)
-  return [...Array(lastDate.getDate())].map((v) => v + 1)
+  const date = new Date(`${year}-${month}-01`)
+  date.setDate(-1)
+  return [...Array(date.getDate())].map((_, v) => v + 1)
 }
 type FileImporterProps = {
   month: { year: number; month: number }
@@ -67,8 +56,6 @@ type FileImporterProps = {
   ) => void
 }
 export const FileImporter = (props: FileImporterProps) => {
-  const [ngSchedules, setNgSchedules] = useState<NgScheduleCsv[]>([])
-
   const handleLoadFarm = useCallback((data: string[]) => {
     props.onLoadFarmCsv(
       data.map((v) => ({

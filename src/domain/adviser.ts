@@ -8,7 +8,7 @@ type Schedule = {
   time: Time
   status: FarmId | 'none' | 'NG'
 }
-type Adviser = {
+export type Adviser = {
   id: string
   lastName: string
   firstName: string
