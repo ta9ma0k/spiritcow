@@ -57,12 +57,17 @@ type FileImporterProps = {
 }
 export const FileImporter = (props: FileImporterProps) => {
   const handleLoadFarm = useCallback((data: string[]) => {
+    const dates = makeDateList(props.month.year, props.month.month)
     props.onLoadFarmCsv(
       data.map((v) => ({
         id: v[0],
         name: v[1],
         adviserIds: v[2].split(','),
-        cost: 0,
+        cost: Number(v[3]),
+        schedules: dates.flatMap((date) => [
+          { date, time: 'AM', event: 'NONE' },
+          { date, time: 'PM', event: 'NONE' },
+        ]),
       }))
     )
   }, [])

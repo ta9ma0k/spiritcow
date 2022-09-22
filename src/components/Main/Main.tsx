@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useFarm } from '../../domain'
 import { useAdviser } from '../../domain/adviser'
-import { CostForm } from '../CostForm'
 import { FileImporter } from '../FileImporter'
 import { MonthForm } from '../MonthForm'
 import { ScheduleEditor } from '../Schedule'
 
-type Status = 'EDIT_MONTH' | 'IMPORT_FILE' | 'SET_COST' | 'EDIT_SCHEDULES'
+type Status = 'EDIT_MONTH' | 'IMPORT_FILE' | 'EDIT_SCHEDULES'
 
 type NextButtonProps = {
   onClick: () => void
@@ -26,7 +25,7 @@ export const Main = () => {
     year: 0,
     month: 0,
   })
-  const { farms, setFarm, setCost } = useFarm()
+  const { farms, setFarm } = useFarm()
   const { advisers, setAdviser, setNgSchedule } = useAdviser()
 
   if (status === 'EDIT_MONTH') {
@@ -49,14 +48,6 @@ export const Main = () => {
           onLoadAdviserCsv={setAdviser}
           onLoadNgScheduleCsv={setNgSchedule}
         />
-        <NextButton onClick={() => setStatus('SET_COST')} />
-      </div>
-    )
-  }
-  if (status === 'SET_COST') {
-    return (
-      <div className='flex flex-col items-center'>
-        <CostForm farms={farms} onChangeCost={setCost} />
         <NextButton onClick={() => setStatus('EDIT_SCHEDULES')} />
       </div>
     )

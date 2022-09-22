@@ -21,7 +21,7 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
       <div className='sticky top-0 p-1 border-b-2 border-r-4 bg-zinc-50'>
         <h2 className='text-lg'>{props.farm.name}</h2>
         <h3 className='text-sm'>
-          {cost}/{Math.floor(props.farm.cost * 0.85).toLocaleString()}
+          0/{Math.floor(props.farm.cost * 0.85).toLocaleString()}
         </h3>
       </div>
       <div>

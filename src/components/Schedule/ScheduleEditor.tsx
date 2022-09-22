@@ -1,11 +1,7 @@
+import { useMemo } from 'react'
 import { Adviser, Farm } from '../../domain'
+import { makeDates } from '../../util/date'
 import { ScheduleCard } from './ScheduleCard'
-
-const makeDates = (year: number, month: number): number[] => {
-  const date = new Date(`${year}-${month}-01`)
-  date.setDate(-1)
-  return [...Array(date.getDate())].map((_, v) => v + 1)
-}
 
 type ScheduleEditorProps = {
   month: { year: number; month: number }
@@ -13,15 +9,21 @@ type ScheduleEditorProps = {
   advisers: Adviser[]
 }
 export const ScheduleEditor = (props: ScheduleEditorProps) => {
-  const dateList = makeDates(props.month.year, props.month.month)
+  const dates = useMemo(
+    () => makeDates(props.month.year, props.month.month),
+    [props.month]
+  )
   return (
     <div className='flex w-fit'>
       {props.farms.map((f) => (
         <ScheduleCard
           farm={f}
-          am={[]}
-          pm={[]}
-          dates={dateList}
+          dates={dates}
+          advisers={
+            f.adviserIds
+              .map((adId) => props.advisers.find((ad) => ad.id === adId))
+              .filter((v) => !!v) as Adviser[]
+          }
           onClickDate={() => 1}
         />
       ))}
