@@ -1,11 +1,15 @@
 import clsx from 'clsx'
 import React, { useMemo, useState } from 'react'
 import {
+  EventMap,
+  Events,
+  EventStatus,
   Farm,
   getSchedule,
   scheduleKeyFromString,
   ScheduleMap,
   ScheduleStatus,
+  toJpString,
 } from '../../domain'
 import { Time } from '../../domain/time'
 import { makeDates, toDayJp } from '../../util/date'
@@ -77,13 +81,28 @@ type DialogContentsProps = {
     time: Time,
     adviserId: string
   ) => void
+  onSetEvent: (event: EventStatus) => void
 } & DialogState
 const DialogContents = (props: DialogContentsProps) => {
   const { farm, date, time, schedules, farmNameMap } = props
   return (
     <div>
-      <h3>{farm.name}</h3>
-      <h4>{`${date.getDate()}(${toDayJp(date)}) ${time}`}</h4>
+      <h3 className='space-x-2 text-lg'>
+        <span>{farm.name}</span>
+        <span>{`${date.getDate()}(${toDayJp(date)})${time}`}</span>
+      </h3>
+      <div className='my-2'>
+        <select
+          className='text-lg p-2 bg-slate-50 rounded-md border hover:cursor-pointer'
+          onChange={(e) => props.onSetEvent(e.target.value as EventStatus)}
+        >
+          {Events.map((v) => (
+            <option key={`option-${v}`} value={v}>
+              {toJpString(v)}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className='flex flex-col space-y-2 mt-5'>
         {farm.advisers.map((ad) => {
           const s = getSchedule(schedules, {
@@ -151,6 +170,7 @@ type ScheduleEditorProps = {
   month: number
   farms: Farm[]
   schedules: ScheduleMap
+  events: EventMap
   onAssign: (
     farmId: string,
     date: number,
@@ -162,6 +182,12 @@ type ScheduleEditorProps = {
     date: number,
     time: Time,
     adviserId: string
+  ) => void
+  onSetFarmEvent: (
+    farmId: string,
+    date: number,
+    time: Time,
+    event: EventStatus
   ) => void
 }
 export const ScheduleEditor = (props: ScheduleEditorProps) => {
@@ -175,6 +201,7 @@ export const ScheduleEditor = (props: ScheduleEditorProps) => {
             <ScheduleCard
               farm={f}
               schedules={props.schedules}
+              events={props.events}
               dates={dates}
               onClickDate={(farm, date, time) =>
                 setDialog({ farm, date, time })
@@ -196,6 +223,14 @@ export const ScheduleEditor = (props: ScheduleEditorProps) => {
             schedules={props.schedules}
             onAssign={props.onAssign}
             onUnAssign={props.onUnAssign}
+            onSetEvent={(e) =>
+              props.onSetFarmEvent(
+                dialog.farm.id,
+                dialog.date.getDate(),
+                dialog.time,
+                e
+              )
+            }
           />
         )}
       </Dialog>

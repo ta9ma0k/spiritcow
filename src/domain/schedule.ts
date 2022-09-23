@@ -40,12 +40,8 @@ export const scheduleKeyFromString = (stringKey: string): ScheduleMapKey => {
 export const getSchedule = (
   value: ScheduleMap,
   key: ScheduleMapKey
-): ScheduleStatus | undefined => {
-  const res = value.get(toString(key))
-  if (res) {
-    return res
-  }
-}
+): ScheduleStatus | undefined => value.get(toString(key))
+
 export const useSchedule = () => {
   const [state, setState] = useState(initialState)
 

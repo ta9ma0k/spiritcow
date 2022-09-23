@@ -11,9 +11,10 @@ export const EventStatus = {
   TR: 'tr',
   WORK: 'work',
 } as const
-type EventStatus = typeof EventStatus[keyof typeof EventStatus]
+export type EventStatus = typeof EventStatus[keyof typeof EventStatus]
+export const Events = Object.values(EventStatus)
 // key format is farmId-date-time
-type EventMap = Map<string, EventStatus>
+export type EventMap = Map<string, EventStatus>
 type EventMapKey = {
   farmId: string
   date: number
@@ -24,12 +25,30 @@ const initialState: EventMap = new Map()
 const DELIMITER = '-' as const
 const toString = (key: EventMapKey): string =>
   [...Object.values(key)].join(DELIMITER)
-const fromString = (stringKey: string): EventMapKey => {
+const eventMapKeyFromString = (stringKey: string): EventMapKey => {
   const _res = stringKey.split(DELIMITER)
   return {
     farmId: _res[0],
     date: Number(_res[1]),
     time: _res[2] as Time,
+  }
+}
+export const getEvent = (
+  events: EventMap,
+  farmId: string,
+  date: number,
+  time: Time
+): EventStatus | undefined => events.get(toString({ farmId, date, time }))
+export const toJpString = (event: EventStatus): string => {
+  switch (event) {
+    case EventStatus.NONE:
+      return '-'
+    case EventStatus.WORK:
+      return '作業日'
+    case EventStatus.TR:
+      return '講習日'
+    default:
+      return event.toUpperCase()
   }
 }
 
@@ -57,7 +76,7 @@ export const useEvents = () => {
   }, [])
 
   const setEvent = useCallback(
-    (status: EventStatus, farmId: string, date: number, time: Time) => {
+    (farmId: string, date: number, time: Time, status: EventStatus) => {
       setState(
         produce((draft) => {
           draft.set(toString({ farmId, date, time }), status)

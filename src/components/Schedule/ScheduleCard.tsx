@@ -1,8 +1,17 @@
 import clsx from 'clsx'
 import { useMemo } from 'react'
-import { Farm, getSchedule, ScheduleMap, ScheduleStatus } from '../../domain'
+import {
+  EventMap,
+  EventStatus,
+  Farm,
+  getEvent,
+  getSchedule,
+  ScheduleMap,
+  ScheduleStatus,
+} from '../../domain'
 import { Time, Times } from '../../domain/time'
 import { toDayJp } from '../../util/date'
+import { AdmtgIcon, LdmtgIcon, TraningIcon, WorkIcon } from '../Icon'
 
 const calcCost = (farm: Farm, schedules: ScheduleMap, dates: Date[]): number =>
   farm.advisers
@@ -50,14 +59,23 @@ const toAdviserMap = (
       return acc
     }, {} as { [key in number]: string[] })
 
+const EventIconMap = {
+  [EventStatus.LDMTG]: <LdmtgIcon />,
+  [EventStatus.ADMTG]: <AdmtgIcon />,
+  [EventStatus.WORK]: <WorkIcon />,
+  [EventStatus.TR]: <TraningIcon />,
+  [EventStatus.NONE]: <></>,
+}
+
 type ScheduleCardProps = {
   farm: Farm
   schedules: ScheduleMap
+  events: EventMap
   dates: Date[]
   onClickDate: (farm: Farm, date: Date, time: Time) => void
 }
 export const ScheduleCard = (props: ScheduleCardProps) => {
-  const { farm, schedules, dates, onClickDate } = props
+  const { farm, schedules, events, dates, onClickDate } = props
   const threshold = useMemo(() => Math.floor(farm.cost * 0.85), [farm])
   const cost = calcCost(farm, schedules, dates)
   const amMap = toAdviserMap(farm, schedules, dates, Time.AM)
@@ -83,7 +101,16 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100'
                 onClick={() => onClickDate(farm, d, Time.AM)}
               >
-                <h5 className='py-0 pl-1 text-xs'>am</h5>
+                <h5 className='py-0.5 pl-1 text-xs flex space-x-2'>
+                  <span>am</span>
+                  <span>
+                    {
+                      EventIconMap[
+                        getEvent(events, farm.id, d.getDate(), Time.AM)!
+                      ]
+                    }
+                  </span>
+                </h5>
                 <div className='px-1 text-xs border-t-2'>
                   <ul>
                     {amMap[d.getDate()].length <= 3 ? (
@@ -100,7 +127,16 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100 h-20'
                 onClick={() => onClickDate(farm, d, Time.PM)}
               >
-                <h5 className='py-0 pl-1 text-xs'>pm</h5>
+                <h5 className='py-0.5 pl-1 text-xs flex space-x-2'>
+                  <span>pm</span>
+                  <span>
+                    {
+                      EventIconMap[
+                        getEvent(events, farm.id, d.getDate(), Time.PM)!
+                      ]
+                    }
+                  </span>
+                </h5>
                 <div className='px-1 text-xs border-t-2'>
                   <ul>
                     {pmMap[d.getDate()].length <= 3 ? (

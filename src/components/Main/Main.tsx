@@ -14,7 +14,7 @@ export const Main = () => {
   })
   const { farms, setFarm } = useFarm()
   const { setFarm: initSchedule, schedules, assign, unassign } = useSchedule()
-  const { setFarm: initEvent } = useEvents()
+  const { events, setFarm: initEvent, setEvent } = useEvents()
 
   const handleNextBase = useCallback(() => {
     setStatus('IMPORT_FILE')
@@ -46,10 +46,12 @@ export const Main = () => {
     <ScheduleEditor
       farms={farms}
       schedules={schedules}
+      events={events}
       year={base.year}
       month={base.month}
       onAssign={assign}
       onUnAssign={unassign}
+      onSetFarmEvent={setEvent}
     />
   )
 }
