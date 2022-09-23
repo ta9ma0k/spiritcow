@@ -25,6 +25,29 @@ const calcCost = (farm: Farm, schedules: ScheduleMap, dates: Date[]): number =>
     })
     .reduce((acc, cur) => acc + cur, 0)
 
+const toAdviserMap = (
+  farm: Farm,
+  schedules: ScheduleMap,
+  dates: Date[],
+  time: Time
+): { [key in number]: string[] } =>
+  dates
+    .map((d) => d.getDate())
+    .reduce((acc, date) => {
+      acc[date] = farm.advisers
+        .filter(
+          ({ id }) =>
+            getSchedule(schedules, {
+              farmId: farm.id,
+              date,
+              time,
+              adviserId: id,
+            }) === ScheduleStatus.ASSIGNED
+        )
+        .map((ad) => `${ad.lastName}${ad.firstName}`)
+      return acc
+    }, {} as { [key in number]: string[] })
+
 type ScheduleCardProps = {
   farm: Farm
   schedules: ScheduleMap
@@ -34,6 +57,9 @@ type ScheduleCardProps = {
 export const ScheduleCard = (props: ScheduleCardProps) => {
   const { farm, schedules, dates, onClickDate } = props
   const cost = calcCost(farm, schedules, dates)
+  const amMap = toAdviserMap(farm, schedules, dates, Time.AM)
+  const pmMap = toAdviserMap(farm, schedules, dates, Time.PM)
+
   return (
     <div className='w-48'>
       <div className='sticky top-0 p-1 border-b-2 border-r-4 bg-zinc-50'>
@@ -57,21 +83,15 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
               >
                 <h5 className='p-0 text-xs'>am</h5>
                 <div className='px-1 text-xs border-t-2'>
-                  {farm.advisers.map((ad) => {
-                    const s = getSchedule(schedules, {
-                      farmId: farm.id,
-                      date: d.getDate(),
-                      time: Time.AM,
-                      adviserId: ad.id,
-                    })
-                    if (s === ScheduleStatus.ASSIGNED) {
-                      return (
-                        <p
-                          key={`${farm.id}-${ad.id}`}
-                        >{`${ad.lastName}${ad.firstName}`}</p>
-                      )
-                    }
-                  })}
+                  <ul>
+                    {amMap[d.getDate()].length <= 3 ? (
+                      amMap[d.getDate()].map((v, i) => (
+                        <li key={`${farm.id}-${d.getDate()}-am-${i}`}>{v}</li>
+                      ))
+                    ) : (
+                      <li>...</li>
+                    )}
+                  </ul>
                 </div>
               </div>
               <div
@@ -80,21 +100,15 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
               >
                 <h5 className='p-0 text-xs'>pm</h5>
                 <div className='px-1 text-xs border-t-2'>
-                  {props.farm.advisers.map((ad) => {
-                    const s = getSchedule(schedules, {
-                      farmId: farm.id,
-                      date: d.getDate(),
-                      time: Time.PM,
-                      adviserId: ad.id,
-                    })
-                    if (s === ScheduleStatus.ASSIGNED) {
-                      return (
-                        <p
-                          key={`${farm.id}-${ad.id}`}
-                        >{`${ad.lastName}${ad.firstName}`}</p>
-                      )
-                    }
-                  })}
+                  <ul>
+                    {pmMap[d.getDate()].length <= 3 ? (
+                      pmMap[d.getDate()].map((v, i) => (
+                        <li key={`${farm.id}-${d.getDate()}-pm-${i}`}>{v}</li>
+                      ))
+                    ) : (
+                      <li>...</li>
+                    )}
+                  </ul>
                 </div>
               </div>
             </div>
