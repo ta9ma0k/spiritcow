@@ -40,12 +40,11 @@ export const scheduleKeyFromString = (stringKey: string): ScheduleMapKey => {
 export const getSchedule = (
   value: ScheduleMap,
   key: ScheduleMapKey
-): ScheduleStatus => {
+): ScheduleStatus | undefined => {
   const res = value.get(toString(key))
-  if (!res) {
-    throw new Error('not found value.')
+  if (res) {
+    return res
   }
-  return res
 }
 export const useSchedule = () => {
   const [state, setState] = useState(initialState)
