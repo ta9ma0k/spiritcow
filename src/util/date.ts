@@ -1,5 +1,5 @@
 export const toDayJp = (d: Date): string => {
-  switch (d.getDay()) {
+  switch (d.getUTCDay()) {
     case 0:
       return '日'
     case 1:
