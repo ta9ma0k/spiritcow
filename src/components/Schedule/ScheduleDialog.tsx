@@ -1,5 +1,7 @@
 import clsx from 'clsx'
-import { Adviser } from '../../domain'
+import { Adviser, Farm } from '../../domain'
+import { Time } from '../../domain/time'
+import { toDayJp } from '../../util/date'
 import { Dialog } from '../Dialog'
 import { AssignIcon, CloseIcon, NgIcon } from '../Icon'
 
@@ -56,71 +58,61 @@ const NgBlock = (props: NgBlockProps) => (
 )
 
 type ScheduleDialogProps = {
+  date?: Date
+  time?: Time
+  farm?: Farm
+  advisers?: Adviser[]
   show: boolean
   onClose: () => void
 }
 export const ScheduleDialog = (props: ScheduleDialogProps) => {
-  const data: Adviser[] = [
-    {
-      id: '1',
-      name: 'mike',
-      wage: 10,
-      scuedules: [{ date: 1, time: 'AM', scuedule: 'farm1' }],
-    },
-    {
-      id: '2',
-      name: 'john',
-      wage: 10,
-      scuedules: [{ date: 1, time: 'AM', scuedule: 'none' }],
-    },
-    {
-      id: '3',
-      name: 'saki',
-      wage: 10,
-      scuedules: [{ date: 1, time: 'AM', scuedule: 'ng' }],
-    },
-
-    {
-      id: '4',
-      name: 'tommy',
-      wage: 10,
-      scuedules: [{ date: 1, time: 'AM', scuedule: 'farm2' }],
-    },
-  ]
   return (
     <Dialog show={props.show}>
       <div>
         <button type='button' onClick={props.onClose}>
           <CloseIcon />
         </button>
-        <div>
-          <div className='flex items-end'>
-            <div className='mr-5'>
-              <h3 className='text-lg'>hoge</h3>
-              <h4 className='text-2xl'>3(日) am</h4>
-            </div>
-            <div>
-              <select>
-                <option>-</option>
-                <option>LDMTG</option>
-                <option>ADMTG</option>
-                <option>作業日</option>
-                <option>講習日</option>
-              </select>
-            </div>
-          </div>
-          <div className='mt-5'>
-            {data.map((v) => (
-              <div key={`ad-${v.id}`}>
-                {v.scuedules[0].scuedule === 'ng' ? (
-                  <NgBlock adviser={v} />
-                ) : (
-                  <CheckBlock adviser={v} farmId='farm1' />
-                )}
+        {props.date && props.time && props.farm && props.advisers && (
+          <div>
+            <div className='flex items-end'>
+              <div className='mr-5'>
+                <h3 className='text-lg'>{props.farm.name}</h3>
+                <h4 className='text-2xl'>{`${props.date.getDate()}(${toDayJp(
+                  props.date
+                )}) ${props.time}`}</h4>
               </div>
-            ))}
+              <div>
+                <select>
+                  <option>-</option>
+                  <option>LDMTG</option>
+                  <option>ADMTG</option>
+                  <option>作業日</option>
+                  <option>講習日</option>
+                </select>
+              </div>
+            </div>
+            <div className='mt-5'>
+              {props.advisers
+                .map((ad) => ({
+                  id: ad.id,
+                  name: `${ad.lastName}${ad.firstName}`,
+                  status:
+                    ad.schedules.find(
+                      (s) =>
+                        s.date === props.date.getDate() && s.time === props.time
+                    ) ?? 'none',
+                }))
+                .map((v) => {
+                  if (v.status === 'none') {
+                    return <div>selectable</div>
+                  } else if (v.status === 'NG') {
+                    return <div>ng</div>
+                  }
+                  return <div>selectable</div>
+                })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </Dialog>
   )

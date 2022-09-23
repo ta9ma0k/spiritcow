@@ -1,8 +1,7 @@
 import clsx from 'clsx'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useCSVReader } from 'react-papaparse'
-import { Farm } from '../../domain'
-import { Adviser } from '../../domain/adviser'
+import { Adviser, Farm, NgData } from '../../domain'
 import { Time, timeFromString } from '../../domain/time'
 import { CheckIcon } from '../Icon'
 
@@ -16,7 +15,7 @@ const CsvReader = (props: CsvReaderProps) => {
   return (
     <CSVReader
       onUploadAccepted={({ data }: { data: string[] }) => {
-        props.onLoad(data.slice(1))
+        props.onLoad(data.slice(1).filter((v) => v.length > 1))
       }}
     >
       {({ getRootProps, acceptedFile }: any) => (
@@ -42,56 +41,57 @@ const CsvReader = (props: CsvReaderProps) => {
   )
 }
 
-const makeDateList = (year: number, month: number): number[] => {
-  const date = new Date(`${year}-${month}-01`)
-  date.setDate(-1)
-  return [...Array(date.getDate())].map((_, v) => v + 1)
+type FarmCsv = {
+  id: string
+  name: string
+  adviserIds: string[]
+  cost: number
 }
+type AdviserCsv = {
+  id: string
+  lastName: string
+  firstName: string
+  wage: number
+}
+type NgDataCsv = {
+  adviserId: string
+  date: number
+  time: Time[]
+}
+
 type FileImporterProps = {
-  month: { year: number; month: number }
-  onLoadFarmCsv: (farms: Farm[]) => void
-  onLoadAdviserCsv: (advisers: Adviser[]) => void
-  onLoadNgScheduleCsv: (
-    data: { adviserId: string; date: number; time: Time }[]
-  ) => void
+  onNext: (farms: Farm[], ngdata: NgData[]) => void
 }
 export const FileImporter = (props: FileImporterProps) => {
-  const handleLoadFarm = useCallback((data: string[]) => {
-    const dates = makeDateList(props.month.year, props.month.month)
-    props.onLoadFarmCsv(
-      data.map((v) => ({
+  const [farmCsv, setFarmCsv] = useState<FarmCsv[]>([])
+  const [adviserCsv, setAdviserCsv] = useState<AdviserCsv[]>([])
+  const [ngDataCsv, setNgDataCsv] = useState<NgDataCsv[]>([])
+
+  const handleLoadFarm = useCallback((value: string[]) => {
+    setFarmCsv(
+      value.map((v) => ({
         id: v[0],
         name: v[1],
         adviserIds: v[2].split(','),
         cost: Number(v[3]),
-        schedules: dates.flatMap((date) => [
-          { date, time: 'AM', event: 'NONE' },
-          { date, time: 'PM', event: 'NONE' },
-        ]),
       }))
     )
   }, [])
 
-  const handleLoadAdviser = useCallback((data: string[]) => {
-    props.onLoadAdviserCsv(
-      data.map((v) => ({
+  const handleLoadAdviser = useCallback((value: string[]) => {
+    setAdviserCsv(
+      value.map((v) => ({
         id: v[0],
         lastName: v[1],
         firstName: v[2],
         wage: Number(v[3]),
-        schedules: makeDateList(props.month.year, props.month.month).flatMap(
-          (v) => [
-            { date: v, time: 'AM', status: 'none' },
-            { date: v, time: 'PM', status: 'none' },
-          ]
-        ),
       }))
     )
   }, [])
 
-  const handleLoadNgSchedule = useCallback((data: string[]) => {
-    props.onLoadNgScheduleCsv(
-      data.map((v) => ({
+  const handleLoadNgData = useCallback((value: string[]) => {
+    setNgDataCsv(
+      value.map((v) => ({
         adviserId: v[1],
         date: Number(v[5].split(/\D/)[2]),
         time: timeFromString(v[6]),
@@ -99,11 +99,37 @@ export const FileImporter = (props: FileImporterProps) => {
     )
   }, [])
 
+  const handleClickNext = useCallback(() => {
+    const adviserMap = adviserCsv.reduce((acc, cur) => {
+      acc[cur.id] = { ...cur }
+      return acc
+    }, {} as { [key: string]: Adviser })
+    const farms: Farm[] = farmCsv.map((f) => ({
+      id: f.id,
+      name: f.name,
+      advisers: f.adviserIds.map((id) => {
+        const ad = adviserMap[id]
+        if (!ad) {
+          throw new Error(`not found adviser [${id}]`)
+        }
+        return ad
+      }),
+      cost: f.cost,
+    }))
+    const ngData: NgData[] = ngDataCsv.flatMap((v) =>
+      v.time.map((time) => ({ adviserId: v.adviserId, date: v.date, time }))
+    )
+    props.onNext(farms, ngData)
+  }, [farmCsv, adviserCsv, ngDataCsv])
+
   return (
     <div className='p-5 flex flex-col justifiy-center w-full space-y-2'>
       <CsvReader title='farm' onLoad={handleLoadFarm} />
       <CsvReader title='adviser' onLoad={handleLoadAdviser} />
-      <CsvReader title='ng schedule' onLoad={handleLoadNgSchedule} />
+      <CsvReader title='ng schedule' onLoad={handleLoadNgData} />
+      <button type='button' onClick={handleClickNext}>
+        next
+      </button>
     </div>
   )
 }

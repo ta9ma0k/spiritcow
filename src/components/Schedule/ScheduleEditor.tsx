@@ -1,32 +1,30 @@
-import { useMemo } from 'react'
-import { Adviser, Farm } from '../../domain'
+import React, { useMemo } from 'react'
+import { Farm, ScheduleMap } from '../../domain'
 import { makeDates } from '../../util/date'
 import { ScheduleCard } from './ScheduleCard'
 
 type ScheduleEditorProps = {
-  month: { year: number; month: number }
+  year: number
+  month: number
   farms: Farm[]
-  advisers: Adviser[]
+  schedules: ScheduleMap
 }
 export const ScheduleEditor = (props: ScheduleEditorProps) => {
-  const dates = useMemo(
-    () => makeDates(props.month.year, props.month.month),
-    [props.month]
-  )
+  const dates = useMemo(() => makeDates(props.year, props.month), [props.month])
   return (
-    <div className='flex w-fit'>
-      {props.farms.map((f) => (
-        <ScheduleCard
-          farm={f}
-          dates={dates}
-          advisers={
-            f.adviserIds
-              .map((adId) => props.advisers.find((ad) => ad.id === adId))
-              .filter((v) => !!v) as Adviser[]
-          }
-          onClickDate={() => 1}
-        />
-      ))}
-    </div>
+    <>
+      <div className='flex w-fit'>
+        {props.farms.map((f) => (
+          <React.Fragment key={`schedule-${f.id}`}>
+            <ScheduleCard
+              farm={f}
+              schedules={props.schedules}
+              dates={dates}
+              onClickDate={(farm, date, time) => 0}
+            />
+          </React.Fragment>
+        ))}
+      </div>
+    </>
   )
 }

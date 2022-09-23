@@ -1,6 +1,7 @@
 type MonthFormProps = {
   onChangeYear: (year: number) => void
   onChangeMonth: (month: number) => void
+  onNext: () => void
 }
 export const MonthForm = (props: MonthFormProps) => {
   return (
@@ -17,6 +18,9 @@ export const MonthForm = (props: MonthFormProps) => {
         type='number'
         onChange={(e) => props.onChangeMonth(e.target.valueAsNumber)}
       />
+      <button type='button' onClick={props.onNext}>
+        next
+      </button>
     </div>
   )
 }

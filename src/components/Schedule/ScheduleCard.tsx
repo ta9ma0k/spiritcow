@@ -1,21 +1,15 @@
-import { Adviser, Farm } from '../../domain'
+import { Farm, getSchedule, ScheduleMap, ScheduleStatus } from '../../domain'
+import { Time } from '../../domain/time'
 import { toDayJp } from '../../util/date'
 
 type ScheduleCardProps = {
   farm: Farm
+  schedules: ScheduleMap
   dates: Date[]
-  advisers: Adviser[]
-  onClickDate: () => void
+  onClickDate: (farm: Farm, date: Date, time: Time) => void
 }
 export const ScheduleCard = (props: ScheduleCardProps) => {
-  const cost = props.advisers
-    .map(
-      (a) =>
-        a.schedules.filter((s) => s.status === props.farm.id).length *
-        a.wage *
-        3
-    )
-    .reduce((acc, current) => acc + current, 0)
+  const cost = 0
   return (
     <div className='w-48'>
       <div className='sticky top-0 p-1 border-b-2 border-r-4 bg-zinc-50'>
@@ -34,43 +28,39 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
             <div className='col-span-9 grid grid-cols-2'>
               <div
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100'
-                onClick={props.onClickDate}
+                onClick={() => 1}
               >
                 <h5 className='p-0 text-xs'>am</h5>
                 <div className='px-1 text-sm border-t-2'>
-                  {props.advisers
-                    .filter(
-                      (v) =>
-                        !!v.schedules.find(
-                          (s) =>
-                            s.date === d.getDate() &&
-                            s.time === 'AM' &&
-                            s.status === props.farm.id
-                        )
-                    )
-                    .map((v) => (
-                      <p>{`${v.lastName}${v.firstName}`}</p>
-                    ))}
+                  {props.farm.advisers.map((ad) => {
+                    const s = getSchedule(props.schedules, {
+                      farmId: props.farm.id,
+                      date: d.getDate(),
+                      time: Time.AM,
+                      adviserId: ad.id,
+                    })
+                    if (s === ScheduleStatus.ASSIGNED) {
+                      return <p>{`${ad.lastName}${ad.firstName}`}</p>
+                    }
+                  })}
                 </div>
               </div>
               <div
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100 h-20'
-                onClick={props.onClickDate}
+                onClick={() => 1}
               >
                 <h5 className='p-0 text-xs'>pm</h5>
-                {props.advisers
-                  .filter(
-                    (v) =>
-                      !!v.schedules.find(
-                        (s) =>
-                          s.date === d.getDate() &&
-                          s.time === 'PM' &&
-                          s.status === props.farm.id
-                      )
-                  )
-                  .map((v) => (
-                    <p>{`${v.lastName}${v.firstName}`}</p>
-                  ))}
+                {props.farm.advisers.map((ad) => {
+                  const s = getSchedule(props.schedules, {
+                    farmId: props.farm.id,
+                    date: d.getDate(),
+                    time: Time.PM,
+                    adviserId: ad.id,
+                  })
+                  if (s === ScheduleStatus.ASSIGNED) {
+                    return <p>{`${ad.lastName}${ad.firstName}`}</p>
+                  }
+                })}
                 <div className='px-1 text-sm border-t-2'></div>
               </div>
             </div>

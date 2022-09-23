@@ -1,19 +1,16 @@
-import produce from 'immer'
-import { useCallback, useState } from 'react'
-import { Time } from './time'
+import { useState } from 'react'
 
-type Event = 'LDMTG' | 'ADMTG' | 'TR' | 'WORK' | 'NONE'
-type EventSchedule = {
-  date: number
-  time: Time
-  event: Event
-}
 export type Farm = {
   id: string
   name: string
-  adviserIds: string[]
+  advisers: Adviser[]
   cost: number
-  schedules: EventSchedule[]
+}
+export type Adviser = {
+  id: string
+  lastName: string
+  firstName: string
+  wage: number
 }
 
 export const useFarm = () => {
