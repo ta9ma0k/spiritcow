@@ -93,11 +93,7 @@ export const useSchedule = () => {
             return
           }
           ;[
-            ...new Set(
-              Object.values(draft)
-                .map(fromString)
-                .map((v) => v.farmId)
-            ),
+            ...new Set([...draft.keys()].map(fromString).map((v) => v.farmId)),
           ].forEach((fId) => {
             const key = toString({ farmId: fId, date, time, adviserId })
             if (draft.has(key)) {

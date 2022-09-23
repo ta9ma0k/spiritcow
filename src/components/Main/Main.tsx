@@ -13,7 +13,7 @@ export const Main = () => {
     month: 0,
   })
   const { farms, setFarm } = useFarm()
-  const { setFarm: initSchedule, schedules } = useSchedule()
+  const { setFarm: initSchedule, schedules, assign, unassign } = useSchedule()
   const { setFarm: initEvent } = useEvents()
 
   const handleNextBase = useCallback(() => {
@@ -48,6 +48,8 @@ export const Main = () => {
       schedules={schedules}
       year={base.year}
       month={base.month}
+      onAssign={assign}
+      onUnAssign={unassign}
     />
   )
 }

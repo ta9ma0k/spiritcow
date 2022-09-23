@@ -28,10 +28,10 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
             <div className='col-span-9 grid grid-cols-2'>
               <div
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100'
-                onClick={() => 1}
+                onClick={() => props.onClickDate(props.farm, d, Time.AM)}
               >
                 <h5 className='p-0 text-xs'>am</h5>
-                <div className='px-1 text-sm border-t-2'>
+                <div className='px-1 text-xs border-t-2'>
                   {props.farm.advisers.map((ad) => {
                     const s = getSchedule(props.schedules, {
                       farmId: props.farm.id,
@@ -40,28 +40,37 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
                       adviserId: ad.id,
                     })
                     if (s === ScheduleStatus.ASSIGNED) {
-                      return <p>{`${ad.lastName}${ad.firstName}`}</p>
+                      return (
+                        <p
+                          key={`${props.farm.id}-${ad.id}`}
+                        >{`${ad.lastName}${ad.firstName}`}</p>
+                      )
                     }
                   })}
                 </div>
               </div>
               <div
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100 h-20'
-                onClick={() => 1}
+                onClick={() => props.onClickDate(props.farm, d, Time.PM)}
               >
                 <h5 className='p-0 text-xs'>pm</h5>
-                {props.farm.advisers.map((ad) => {
-                  const s = getSchedule(props.schedules, {
-                    farmId: props.farm.id,
-                    date: d.getDate(),
-                    time: Time.PM,
-                    adviserId: ad.id,
-                  })
-                  if (s === ScheduleStatus.ASSIGNED) {
-                    return <p>{`${ad.lastName}${ad.firstName}`}</p>
-                  }
-                })}
-                <div className='px-1 text-sm border-t-2'></div>
+                <div className='px-1 text-xs border-t-2'>
+                  {props.farm.advisers.map((ad) => {
+                    const s = getSchedule(props.schedules, {
+                      farmId: props.farm.id,
+                      date: d.getDate(),
+                      time: Time.PM,
+                      adviserId: ad.id,
+                    })
+                    if (s === ScheduleStatus.ASSIGNED) {
+                      return (
+                        <p
+                          key={`${props.farm.id}-${ad.id}`}
+                        >{`${ad.lastName}${ad.firstName}`}</p>
+                      )
+                    }
+                  })}
+                </div>
               </div>
             </div>
           </div>
