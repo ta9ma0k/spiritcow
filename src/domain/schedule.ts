@@ -28,7 +28,7 @@ const initialState: ScheduleMap = new Map()
 const DELIMITER = '-' as const
 const toString = (key: ScheduleMapKey): string =>
   [...Object.values(key)].join(DELIMITER)
-const fromString = (stringKey: string): ScheduleMapKey => {
+export const scheduleKeyFromString = (stringKey: string): ScheduleMapKey => {
   const splited = stringKey.split(DELIMITER)
   return {
     farmId: splited[0],
@@ -93,7 +93,9 @@ export const useSchedule = () => {
             return
           }
           ;[
-            ...new Set([...draft.keys()].map(fromString).map((v) => v.farmId)),
+            ...new Set(
+              [...draft.keys()].map(scheduleKeyFromString).map((v) => v.farmId)
+            ),
           ].forEach((fId) => {
             const key = toString({ farmId: fId, date, time, adviserId })
             if (draft.has(key)) {
