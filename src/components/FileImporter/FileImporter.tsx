@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { useCSVReader } from 'react-papaparse'
 import { Adviser, Farm, NgData } from '../../domain'
 import { Time, timeFromString } from '../../domain/time'
+import { BorderButton } from '../Button'
 import { CheckIcon } from '../Icon'
 
 type CsvReaderProps = {
@@ -123,13 +124,11 @@ export const FileImporter = (props: FileImporterProps) => {
   }, [farmCsv, adviserCsv, ngDataCsv])
 
   return (
-    <div className='p-5 flex flex-col justifiy-center w-full space-y-2'>
+    <div className='p-5 flex flex-col items-center space-y-2'>
       <CsvReader title='farm' onLoad={handleLoadFarm} />
       <CsvReader title='adviser' onLoad={handleLoadAdviser} />
       <CsvReader title='ng schedule' onLoad={handleLoadNgData} />
-      <button type='button' onClick={handleClickNext}>
-        next
-      </button>
+      <BorderButton text='next' onClick={handleClickNext} />
     </div>
   )
 }

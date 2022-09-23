@@ -1,3 +1,5 @@
+import { BorderButton } from '../Button'
+
 const initYear = () => {
   const today = new Date()
   const year = today.getFullYear()
@@ -32,9 +34,7 @@ export const MonthForm = (props: MonthFormProps) => {
           </option>
         ))}
       </select>
-      <button type='button' onClick={props.onNext}>
-        next
-      </button>
+      <BorderButton text='next' onClick={props.onNext} />
     </div>
   )
 }
