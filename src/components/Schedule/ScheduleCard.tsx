@@ -1,3 +1,5 @@
+import clsx from 'clsx'
+import { useMemo } from 'react'
 import { Farm, getSchedule, ScheduleMap, ScheduleStatus } from '../../domain'
 import { Time, Times } from '../../domain/time'
 import { toDayJp } from '../../util/date'
@@ -56,6 +58,7 @@ type ScheduleCardProps = {
 }
 export const ScheduleCard = (props: ScheduleCardProps) => {
   const { farm, schedules, dates, onClickDate } = props
+  const threshold = useMemo(() => Math.floor(farm.cost * 0.85), [farm])
   const cost = calcCost(farm, schedules, dates)
   const amMap = toAdviserMap(farm, schedules, dates, Time.AM)
   const pmMap = toAdviserMap(farm, schedules, dates, Time.PM)
@@ -64,9 +67,8 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
     <div className='w-48'>
       <div className='sticky top-0 p-1 border-b-2 border-r-4 bg-zinc-50'>
         <h2 className='text-lg'>{farm.name}</h2>
-        <h3 className='text-sm'>
-          {cost.toLocaleString()}/
-          {Math.floor(farm.cost * 0.85).toLocaleString()}
+        <h3 className={clsx('text-sm', cost > threshold ? 'text-red-300' : '')}>
+          {cost.toLocaleString()}/{threshold.toLocaleString()}
         </h3>
       </div>
       <div>
@@ -81,7 +83,7 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100'
                 onClick={() => onClickDate(farm, d, Time.AM)}
               >
-                <h5 className='p-0 text-xs'>am</h5>
+                <h5 className='py-0 pl-1 text-xs'>am</h5>
                 <div className='px-1 text-xs border-t-2'>
                   <ul>
                     {amMap[d.getDate()].length <= 3 ? (
@@ -98,7 +100,7 @@ export const ScheduleCard = (props: ScheduleCardProps) => {
                 className='border-r-2 grid-span-1 hover:cursor-pointer hover:bg-lime-100 duration-100 h-20'
                 onClick={() => onClickDate(farm, d, Time.PM)}
               >
-                <h5 className='p-0 text-xs'>pm</h5>
+                <h5 className='py-0 pl-1 text-xs'>pm</h5>
                 <div className='px-1 text-xs border-t-2'>
                   <ul>
                     {pmMap[d.getDate()].length <= 3 ? (
