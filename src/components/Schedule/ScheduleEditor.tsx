@@ -5,6 +5,7 @@ import {
   Events,
   EventStatus,
   Farm,
+  getEvent,
   getSchedule,
   scheduleKeyFromString,
   ScheduleMap,
@@ -68,6 +69,7 @@ type DialogState = {
 }
 type DialogContentsProps = {
   schedules: ScheduleMap
+  events: EventMap
   farmNameMap: { [id in string]: string }
   onAssign: (
     farmId: string,
@@ -84,7 +86,8 @@ type DialogContentsProps = {
   onSetEvent: (event: EventStatus) => void
 } & DialogState
 const DialogContents = (props: DialogContentsProps) => {
-  const { farm, date, time, schedules, farmNameMap } = props
+  const { farm, date, time, schedules, events, farmNameMap } = props
+  const event = getEvent(events, farm.id, date.getDate(), time)
   return (
     <div>
       <h3 className='space-x-2 text-lg'>
@@ -95,6 +98,7 @@ const DialogContents = (props: DialogContentsProps) => {
         <select
           className='text-lg p-2 bg-slate-50 rounded-md border hover:cursor-pointer'
           onChange={(e) => props.onSetEvent(e.target.value as EventStatus)}
+          value={event}
         >
           {Events.map((v) => (
             <option key={`option-${v}`} value={v}>
@@ -234,6 +238,7 @@ export const ScheduleEditor = (props: ScheduleEditorProps) => {
             date={dialog.date}
             time={dialog.time}
             schedules={props.schedules}
+            events={props.events}
             onAssign={props.onAssign}
             onUnAssign={props.onUnAssign}
             onSetEvent={(e) =>
