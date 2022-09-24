@@ -46,7 +46,7 @@ export const toJpString = (event: EventStatus): string => {
     case EventStatus.WORK:
       return '作業日'
     case EventStatus.TR:
-      return '講習日'
+      return '講習会'
     default:
       return event.toUpperCase()
   }
