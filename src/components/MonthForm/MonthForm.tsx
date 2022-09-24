@@ -1,4 +1,5 @@
 import { BorderButton } from '../Button'
+import Icon from '/cow.svg'
 
 const initYear = () => {
   const today = new Date()
@@ -14,6 +15,10 @@ type MonthFormProps = {
 export const MonthForm = (props: MonthFormProps) => {
   return (
     <div className='flex items-center flex-col space-y-2 pt-5'>
+      <h1>
+        <img src={Icon} alt='icon' />
+        spiritcow v{__APP_VERSION__}
+      </h1>
       <select
         className='w-20 rounded-lg p-1 bg-slate-50 border hover:cursor-pointer'
         onChange={(e) => props.onChangeYear(Number(e.target.value))}
