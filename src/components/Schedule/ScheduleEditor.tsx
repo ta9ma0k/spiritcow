@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   EventMap,
   Events,
@@ -165,6 +165,10 @@ const DialogContents = (props: DialogContentsProps) => {
   )
 }
 
+const onUnload = (e: BeforeUnloadEvent) => {
+  e.preventDefault()
+  e.returnValue = ''
+}
 type ScheduleEditorProps = {
   year: number
   month: number
@@ -193,6 +197,15 @@ type ScheduleEditorProps = {
 export const ScheduleEditor = (props: ScheduleEditorProps) => {
   const [dialog, setDialog] = useState<DialogState>()
   const dates = useMemo(() => makeDates(props.year, props.month), [props.month])
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', onUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', onUnload)
+    }
+  })
+
   return (
     <>
       <div className='flex w-fit'>
