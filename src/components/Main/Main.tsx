@@ -1,17 +1,22 @@
 import { useCallback, useState } from 'react'
 import { Farm, NgData, useEvents, useFarm, useSchedule } from '../../domain'
+import { CsvExportButton } from '../CsvExport'
 import { FileImporter } from '../FileImporter'
 import { MonthForm } from '../MonthForm'
 import { ScheduleEditor } from '../Schedule'
 
 type Status = 'EDIT_MONTH' | 'IMPORT_FILE' | 'EDIT_SCHEDULES'
-
+type BaseState = {
+  year: number
+  month: number
+}
+const initBaseState = (): BaseState => {
+  const today = new Date()
+  return { year: today.getFullYear(), month: 1 }
+}
 export const Main = () => {
   const [status, setStatus] = useState<Status>('EDIT_MONTH')
-  const [base, setBase] = useState<{ year: number; month: number }>({
-    year: 0,
-    month: 0,
-  })
+  const [base, setBase] = useState(initBaseState())
   const { farms, setFarm } = useFarm()
   const { setFarm: initSchedule, schedules, assign, unassign } = useSchedule()
   const { events, setFarm: initEvent, setEvent } = useEvents()
@@ -29,7 +34,6 @@ export const Main = () => {
     },
     [base]
   )
-
   if (status === 'EDIT_MONTH') {
     return (
       <MonthForm
@@ -43,15 +47,24 @@ export const Main = () => {
     return <FileImporter onNext={handleNextFileImporter} />
   }
   return (
-    <ScheduleEditor
-      farms={farms}
-      schedules={schedules}
-      events={events}
-      year={base.year}
-      month={base.month}
-      onAssign={assign}
-      onUnAssign={unassign}
-      onSetFarmEvent={setEvent}
-    />
+    <div className='w-fit'>
+      <CsvExportButton
+        farms={farms}
+        schedules={schedules}
+        events={events}
+        year={base.year}
+        month={base.month}
+      />
+      <ScheduleEditor
+        farms={farms}
+        schedules={schedules}
+        events={events}
+        year={base.year}
+        month={base.month}
+        onAssign={assign}
+        onUnAssign={unassign}
+        onSetFarmEvent={setEvent}
+      />
+    </div>
   )
 }
