@@ -220,3 +220,35 @@ export const SHIFT_HEADERS: CsvHeader[] = [
   { label: '勤務開始時間', key: 'start' },
   { label: '勤務終了時間', key: 'end' },
 ]
+
+export type EventCsv = {
+  displayStatus: string
+  displayUser: string
+  displayAd: string
+  version: string
+  title: string
+  eventType: string
+  date: string
+  allDay: string
+  start?: string
+  end?: string
+  farmId: string
+}
+
+export const EVENT_HEADERS: CsvHeader[] = [
+  { label: 'Id', key: 'h1' },
+  { label: '公開ステータス', key: 'displayStatus' },
+  { label: '一般ユーザー画面・非表示', key: 'displayUser' },
+  { label: 'アドバイザー画面・非表示', key: 'displayAd' },
+  { label: 'バージョン', key: 'version' },
+  { label: 'タイトル', key: 'title' },
+  { label: 'イベント種別', key: 'eventType' },
+  { label: '日付', key: 'date' },
+  { label: '終日', key: 'allDay' },
+  { label: '開始時刻', key: 'start' },
+  { label: '終了時刻', key: 'end' },
+  { label: 'Sf farm', key: 'farmId' },
+  { label: '', key: 'h2' },
+  { label: '', key: 'h3' },
+  { label: '', key: 'h4' },
+]

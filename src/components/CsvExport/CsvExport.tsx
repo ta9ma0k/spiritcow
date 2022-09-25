@@ -2,13 +2,23 @@ import { useCallback, useRef } from 'react'
 import { CSVLink } from 'react-csv'
 import {
   EventMap,
+  eventMapKeyFromString,
+  EventStatus,
   Farm,
   scheduleKeyFromString,
   ScheduleMap,
   ScheduleStatus,
+  toJpString,
 } from '../../domain'
-import { timeToString } from '../../domain/time'
-import { JinjaCsv, JINJA_HEADERS, ShiftCsv, SHIFT_HEADERS } from './csv'
+import { eventTimeToString, Time, timeToString } from '../../domain/time'
+import {
+  EventCsv,
+  EVENT_HEADERS,
+  JinjaCsv,
+  JINJA_HEADERS,
+  ShiftCsv,
+  SHIFT_HEADERS,
+} from './csv'
 
 const headers = [
   { label: 'First Name', key: 'firstname' },
@@ -92,6 +102,53 @@ const toShiftCsv = (
     })
 }
 
+const objectByEventKey = (
+  e: EventStatus,
+  time: Time
+): Omit<
+  EventCsv,
+  | 'displayStatus'
+  | 'displayAd'
+  | 'displayUser'
+  | 'date'
+  | 'farmId'
+  | 'version'
+  | 'eventType'
+> => {
+  switch (e) {
+    case EventStatus.TR:
+      const [start, end] = eventTimeToString(time)
+      return { title: '体験会', allDay: '0', start, end }
+    case EventStatus.LDMTG:
+    case EventStatus.ADMTG:
+    case EventStatus.WORK:
+      return { title: toJpString(e), allDay: '1' }
+    default:
+      throw new Error('not expexted value.')
+  }
+}
+const toEventCsv = (
+  events: EventMap,
+  year: number,
+  month: number
+): EventCsv[] => {
+  return [...events.entries()]
+    .filter(([_, e]) => e !== EventStatus.NONE)
+    .map(([strKey, e]) => {
+      const key = eventMapKeyFromString(strKey)
+      return {
+        displayStatus: '1',
+        displayUser: '1',
+        displayAd: '0',
+        version: '2022_07',
+        eventType: 'nothing',
+        date: `${year}/${month}/${key.date}`,
+        farmId: key.farmId,
+        ...objectByEventKey(e, key.time),
+      }
+    })
+}
+
 type CsvExportButtonProps = {
   farms: Farm[]
   schedules: ScheduleMap
@@ -156,10 +213,11 @@ export const CsvExportButton = (props: CsvExportButtonProps) => {
           enclosingCharacter=''
         />
         <CSVLink
-          headers={headers}
-          data={data}
+          headers={EVENT_HEADERS}
+          data={toEventCsv(props.events, props.year, props.month)}
           filename={EVENT_FILENAME}
           ref={ref3}
+          enclosingCharacter=''
         />
       </div>
     </>

@@ -28,3 +28,11 @@ export const timeToString = (time: Time): [string, string] => {
       return ['13:00', '16:00']
   }
 }
+export const eventTimeToString = (time: Time): [string, string] => {
+  switch (time) {
+    case Time.AM:
+      return ['9:30', '10:30']
+    case Time.PM:
+      return ['13:30', '14:30']
+  }
+}

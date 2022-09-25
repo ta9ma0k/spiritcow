@@ -25,7 +25,7 @@ const initialState: EventMap = new Map()
 const DELIMITER = '-' as const
 const toString = (key: EventMapKey): string =>
   [...Object.values(key)].join(DELIMITER)
-const eventMapKeyFromString = (stringKey: string): EventMapKey => {
+export const eventMapKeyFromString = (stringKey: string): EventMapKey => {
   const _res = stringKey.split(DELIMITER)
   return {
     farmId: _res[0],
