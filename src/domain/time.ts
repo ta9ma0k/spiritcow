@@ -18,3 +18,13 @@ export const timeFromString = (value: string): Time[] => {
   }
   return [Time.AM, Time.PM]
 }
+
+//TODO summertime
+export const timeToString = (time: Time): [string, string] => {
+  switch (time) {
+    case Time.AM:
+      return ['9:00', '12:00']
+    case Time.PM:
+      return ['13:00', '16:00']
+  }
+}

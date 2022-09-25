@@ -7,8 +7,8 @@ import {
   ScheduleMap,
   ScheduleStatus,
 } from '../../domain'
-import { Time } from '../../domain/time'
-import { JinjaCsv, JINJA_HEADERS } from './csv'
+import { timeToString } from '../../domain/time'
+import { JinjaCsv, JINJA_HEADERS, ShiftCsv, SHIFT_HEADERS } from './csv'
 
 const headers = [
   { label: 'First Name', key: 'firstname' },
@@ -44,14 +44,50 @@ const toJinjaCsv = (
       if (!ad) {
         throw new Error(`not found adviser id. ${key.adviserId}`)
       }
+      const [start, end] = timeToString(key.time)
       return {
         name: `${ad.lastName} ${ad.firstName}`,
         adId: key.adviserId,
         date: `${year}/${month}/${key.date}`,
         gId: '36',
         gName: '農園',
-        start: key.time === Time.AM ? '9:00' : '13:00',
-        end: key.time === Time.AM ? '12:00' : '16:00',
+        start,
+        end,
+      }
+    })
+}
+
+const toShiftCsv = (
+  schedules: ScheduleMap,
+  farms: Farm[],
+  year: number,
+  month: number
+): ShiftCsv[] => {
+  return [...schedules.entries()]
+    .filter(([_, s]) => s === ScheduleStatus.ASSIGNED)
+    .map(([strKey]) => {
+      const key = scheduleKeyFromString(strKey)
+      const farm = farms.find(({ id }) => id === key.farmId)
+      if (!farm) {
+        throw new Error(`not found farm. ${key.farmId}`)
+      }
+      const ad = farm.advisers.find(({ id }) => id === key.adviserId)
+      if (!ad) {
+        throw new Error(`not found adviser. ${key.adviserId}`)
+      }
+      const [start, end] = timeToString(key.time)
+      return {
+        display: '1',
+        workType: 'farm', //TODO other?
+        version: '2022_07',
+        adId: key.adviserId,
+        lastName: ad.lastName + ' ',
+        firstName: ad.firstName,
+        farmName: farm.name,
+        farmId: key.farmId,
+        date: `${year}/${month}/${key.date}`,
+        start,
+        end,
       }
     })
 }
@@ -108,10 +144,16 @@ export const CsvExportButton = (props: CsvExportButtonProps) => {
           enclosingCharacter=''
         />
         <CSVLink
-          headers={headers}
-          data={data}
+          headers={SHIFT_HEADERS}
+          data={toShiftCsv(
+            props.schedules,
+            props.farms,
+            props.year,
+            props.month
+          )}
           filename={SHIFT_FILENAME}
           ref={ref2}
+          enclosingCharacter=''
         />
         <CSVLink
           headers={headers}

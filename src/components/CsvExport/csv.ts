@@ -1,3 +1,4 @@
+type CsvHeader = { label: string; key: string }
 export type JinjaCsv = {
   name: string
   adId: string
@@ -7,7 +8,7 @@ export type JinjaCsv = {
   start: string
   end: string
 }
-export const JINJA_HEADERS = [
+export const JINJA_HEADERS: CsvHeader[] = [
   { label: '名前', key: 'name' },
   { label: '*従業員ID', key: 'adId' },
   { label: '*年月日', key: 'date' },
@@ -189,4 +190,33 @@ export const JINJA_HEADERS = [
   { label: '退勤乖離時間（退館時刻ー退勤時刻）', key: 'h172' },
   { label: '出勤乖離時間（出勤時刻ーPC起動時刻）', key: 'h173' },
   { label: '退勤乖離時間（PC停止時刻ー退勤時刻）', key: 'h174' },
+]
+
+export type ShiftCsv = {
+  display: string
+  workType: string
+  version: string
+  adId: string
+  lastName: string
+  firstName: string
+  farmName: string
+  farmId: string
+  date: string
+  start: string
+  end: string
+}
+
+export const SHIFT_HEADERS: CsvHeader[] = [
+  { label: 'Id', key: 'h1' },
+  { label: '表示', key: 'display' },
+  { label: '勤務タイプ', key: 'workType' },
+  { label: 'シフトバージョン', key: 'version' },
+  { label: 'スタッフコード', key: 'adId' },
+  { label: 'スタッフ姓', key: 'lastName' },
+  { label: 'スタッフ名', key: 'firstName' },
+  { label: '農園名', key: 'farmName' },
+  { label: 'sf_farm_id', key: 'farmId' },
+  { label: '日にち', key: 'date' },
+  { label: '勤務開始時間', key: 'start' },
+  { label: '勤務終了時間', key: 'end' },
 ]
