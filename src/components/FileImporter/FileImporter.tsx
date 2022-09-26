@@ -62,6 +62,7 @@ type NgDataCsv = {
 
 type FileImporterProps = {
   onNext: (farms: Farm[], ngdata: NgData[]) => void
+  isSummerTime: boolean
 }
 export const FileImporter = (props: FileImporterProps) => {
   const [farmCsv, setFarmCsv] = useState<FarmCsv[]>([])
@@ -95,7 +96,7 @@ export const FileImporter = (props: FileImporterProps) => {
       value.map((v) => ({
         adviserId: v[1],
         date: Number(v[5].split(/\D/)[2]),
-        time: timeFromString(v[6]),
+        time: timeFromString(v[6], props.isSummerTime),
       }))
     )
   }, [])

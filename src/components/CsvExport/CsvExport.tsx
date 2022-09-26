@@ -10,7 +10,12 @@ import {
   ScheduleStatus,
   toJpString,
 } from '../../domain'
-import { eventTimeToString, Time, timeToString } from '../../domain/time'
+import {
+  checkSummerTime,
+  eventTimeToString,
+  Time,
+  timeToString,
+} from '../../domain/time'
 import {
   EventCsv,
   EVENT_HEADERS,
@@ -54,7 +59,7 @@ const toJinjaCsv = (
       if (!ad) {
         throw new Error(`not found adviser id. ${key.adviserId}`)
       }
-      const [start, end] = timeToString(key.time)
+      const [start, end] = timeToString(key.time, checkSummerTime(month))
       return {
         name: `${ad.lastName} ${ad.firstName}`,
         adId: key.adviserId,
@@ -85,7 +90,7 @@ const toShiftCsv = (
       if (!ad) {
         throw new Error(`not found adviser. ${key.adviserId}`)
       }
-      const [start, end] = timeToString(key.time)
+      const [start, end] = timeToString(key.time, checkSummerTime(month))
       return {
         display: '1',
         workType: 'farm', //TODO other?

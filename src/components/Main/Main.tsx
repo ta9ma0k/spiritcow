@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Farm, NgData, useEvents, useFarm, useSchedule } from '../../domain'
+import { checkSummerTime } from '../../domain/time'
 import { CsvExportButton } from '../CsvExport'
 import { FileImporter } from '../FileImporter'
 import { MonthForm } from '../MonthForm'
@@ -44,7 +45,12 @@ export const Main = () => {
     )
   }
   if (status === 'IMPORT_FILE') {
-    return <FileImporter onNext={handleNextFileImporter} />
+    return (
+      <FileImporter
+        onNext={handleNextFileImporter}
+        isSummerTime={checkSummerTime(base.month)}
+      />
+    )
   }
   return (
     <div className='w-fit'>
