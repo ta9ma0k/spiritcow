@@ -57,7 +57,7 @@ export const useSchedule = () => {
                   const isNg = ngDatas.find(
                     (v) =>
                       v.adviserId === a.id &&
-                      v.date === d.getDay() &&
+                      v.date === d.getDate() &&
                       v.time === t
                   )
                   draft.set(

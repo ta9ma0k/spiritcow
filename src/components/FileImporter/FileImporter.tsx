@@ -95,7 +95,7 @@ export const FileImporter = (props: FileImporterProps) => {
     setNgDataCsv(
       value.map((v) => ({
         adviserId: v[1],
-        date: Number(v[5].split(/\D/)[2]),
+        date: Number(v[5].split(/\D/)[4]),
         time: timeFromString(v[6], props.isSummerTime),
       }))
     )
